@@ -3,6 +3,7 @@ package org.maxim.symmetriccryptography;
 import org.maxim.symmetriccryptography.service.Encoder;
 import org.maxim.symmetriccryptography.service.impl.PlayfairEncoder;
 import org.maxim.symmetriccryptography.service.impl.PolynomialEncoder;
+import org.maxim.symmetriccryptography.service.impl.RotaryGrilleEncoder;
 
 public class App {
 
@@ -11,7 +12,8 @@ public class App {
     public static void main(String[] args) {
         Encoder[] encoders = {
                 new PlayfairEncoder(),
-                new PolynomialEncoder()
+                new PolynomialEncoder(),
+                new RotaryGrilleEncoder()
         };
 
         String message = args.length == 0 ? DEFAULT_MESSAGE : args[0];
