@@ -2,17 +2,22 @@ package org.maxim.symmetriccryptography;
 
 import org.maxim.symmetriccryptography.service.Encoder;
 import org.maxim.symmetriccryptography.service.impl.PlayfairEncoder;
+import org.maxim.symmetriccryptography.service.impl.PolynomialEncoder;
 
 public class App {
 
     private static final String DEFAULT_MESSAGE = "Hide the gold in the tree stump!";
 
     public static void main(String[] args) {
-        Encoder encoder = new PlayfairEncoder();
+        Encoder[] encoders = {
+                new PlayfairEncoder(),
+                new PolynomialEncoder()
+        };
 
         String message = args.length == 0 ? DEFAULT_MESSAGE : args[0];
-
-        testEncoder(encoder, message);
+        for (Encoder encoder : encoders) {
+            testEncoder(encoder, message);
+        }
     }
 
     private static void testEncoder(Encoder encoder, String message) {
