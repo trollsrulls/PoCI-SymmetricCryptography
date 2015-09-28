@@ -192,6 +192,6 @@ public class PlayfairEncoder implements Encoder {
 
     @Override
     public String toString() {
-        return "Playfair encoder: ";
+        return "Playfair encoder";
     }
 }
