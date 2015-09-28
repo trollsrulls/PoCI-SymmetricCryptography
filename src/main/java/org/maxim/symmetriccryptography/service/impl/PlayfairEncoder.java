@@ -78,11 +78,12 @@ public class PlayfairEncoder implements Encoder {
             }
             char right = Character.toLowerCase(msg.charAt(i + 1));
 
+            final char addableSymbol = 'x';
             if (left == right) {
-                bigramms.add(String.valueOf(new char[]{left, 'x'}));
+                bigramms.add(String.valueOf(new char[]{left, addableSymbol}));
             } else {
                 if (EN_ALPHABET.indexOf(right) == -1) {
-                    bigramms.add(String.valueOf(new char[]{left, 'x'}));
+                    bigramms.add(String.valueOf(new char[]{left, addableSymbol}));
                 } else {
                     bigramms.add(String.valueOf(new char[]{left, right}));
                 }
@@ -109,12 +110,28 @@ public class PlayfairEncoder implements Encoder {
         return "" + firstLetter + secondLetter;
     }
 
+    private String decryptBigrammForOneRow(int row, int colFirst, int colSecond) {
+        char firstLetter = codeTable[row][(colFirst - 1 + codeTable.length) % codeTable.length];
+        char secondLetter = codeTable[row][(colSecond - 1 + codeTable.length) % codeTable.length];
+        return "" + firstLetter + secondLetter;
+    }
+
     private String getBigrammForOneColumn(int col, int rowFirst, int rowSecond) {
-        return null;
+        char firstLetter = codeTable[(rowFirst + 1) % codeTable.length][col];
+        char secondLetter = codeTable[(rowSecond + 1) % codeTable.length][col];
+        return "" + firstLetter + secondLetter;
+    }
+
+    private String decryptBigrammForOneColumn(int col, int rowFirst, int rowSecond) {
+        char firstLetter = codeTable[(rowFirst - 1 + codeTable.length) % codeTable.length][col];
+        char secondLetter = codeTable[(rowSecond - 1 + codeTable.length) % codeTable.length][col];
+        return "" + firstLetter + secondLetter;
     }
 
     private String getBigrammForRectangle(int rowFirst, int rowSecond, int colFirst, int colSecond) {
-        return null;
+        char firstLetter = codeTable[rowFirst][colSecond];
+        char secondLetter = codeTable[rowSecond][colFirst];
+        return "" + firstLetter + secondLetter;
     }
 
     private String encryptBigramm(final String bigramm) {
@@ -131,7 +148,16 @@ public class PlayfairEncoder implements Encoder {
     }
 
     private String decryptBigramm(final String bigramm) {
-        return "";
+        Point first = findPos(bigramm.charAt(0));
+        Point second = findPos(bigramm.charAt(1));
+
+        if (first.y == second.y) {
+            return decryptBigrammForOneRow(first.y, first.x, second.x);
+        }
+        if (first.x == second.x) {
+            return decryptBigrammForOneColumn(first.x, first.y, second.y);
+        }
+        return getBigrammForRectangle(first.y, second.y, first.x, second.x);
     }
 
     public String encrypt(String msg) {
@@ -156,7 +182,7 @@ public class PlayfairEncoder implements Encoder {
 
         for (String bigramm : bigramms) {
             String invertedBigramm = decryptBigramm(bigramm);
-            encryptedBundle.add(invertedBigramm);
+            encryptedBundle.add(invertedBigramm.charAt(1) == 'x' ? "" + invertedBigramm.charAt(0) : invertedBigramm);
         }
 
         StringBuilder builder = new StringBuilder();
